@@ -1,4 +1,6 @@
 import { screen, render, fireEvent } from '@testing-library/react'
+import { setupServer } from 'msw/node'
+import { handlers } from '../../../mocks/handlers'
 import LoginPage from './login-page'
 
 const passwordValidationMessage =
@@ -6,7 +8,15 @@ const passwordValidationMessage =
 
 const getPasswordInput = () => screen.getByLabelText(/password/i)
 
+const server = setupServer(...handlers)
+
 beforeEach(() => render(<LoginPage />))
+
+beforeAll(() => server.listen())
+
+afterEach(() => server.resetHandlers())
+
+afterAll(() => server.close())
 
 describe('when login page is mounted', () => {
   it('must display the login title', () => {
